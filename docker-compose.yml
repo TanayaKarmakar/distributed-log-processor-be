@@ -34,7 +34,19 @@ services:
     volumes:
       - ./src/services/log-generator:/app
       - ./logs:/logs
+    restart: unless-stopped
     environment:
       - LOG_RATE=10
       - CONSOLE_OUTPUT=true
       - OUTPUT_FILE=/logs/generated_logs.log
+
+  log-collector:
+    build:
+      context: ./src/services/log-collector
+    volumes:
+      - ./logs:/app/logs:ro  # Read-only access to logs
+      - ./collected_logs:/app/collected_logs
+    command: --log-files /app/logs/app.log --output-dir /app/collected_logs --regex "ERROR"
+    depends_on:
+      - log-generator
+    restart: unless-stopped
