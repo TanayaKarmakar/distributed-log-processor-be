@@ -2,6 +2,8 @@ import time
 import os
 import logging
 from datetime import datetime
+import socket
+import threading
 import config  # import your config.py
 from logging.handlers import RotatingFileHandler
 
@@ -41,16 +43,31 @@ def setup_logger():
 
     return logger, log_frequency
 
+def handle_client(conn, addr, logger):
+    with conn:
+        for line in conn.makefile():
+            logger.info(f"[{addr}] {line.strip()}")
+
 def main():
     """Simple logger service using config.py settings."""
 
     logger, log_frequency = setup_logger()
     logger.info("Starting distributed logger service...")
 
-    while True:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Logger service is running at {timestamp}")
-        time.sleep(log_frequency)
+    host = "0.0.0.0"
+    port = int(os.getenv("LOGGER_PORT", "5000"))
+
+    # while True:
+    #     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #     logger.info(f"Logger service is running at {timestamp}")
+    #     time.sleep(log_frequency)
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.bind((host, port))
+        server.listen()
+        while True:
+            conn, addr = server.accept()
+            threading.Thread(target=handle_client, args=(conn, addr, logger), daemon=True).start()
 
 if __name__ == "__main__":
     main()

@@ -1,13 +1,40 @@
-version: '3'
+#version: '3'
+#
+#services:
+#  # Our simple Python service to test the environment
+#  logger:
+#    container_name: logger_service
+#    build:
+#      context: ./src/services/logger
+#    volumes:
+#      - ./src/services/logger:/app
+#    ports:
+#      - "8000:8000"
+#    environment:
+#      - LOG_LEVEL=INFO
+#
+#  event_generator:
+#    container_name: event_generator
+#    build:
+#      context: ./src/services/event-generator
+#    volumes:
+#      - ./src/services/event-generator:/app
+#    ports:
+#      - "8001:8001"
+#    environment:
+#      - EVENT_FREQUENCY=5
+#    depends_on:
+#        - logger
+
 
 services:
-  # Our simple Python service to test the environment
-  logger:
+  log-generator:
     build:
-      context: ./src/services/logger
+      context: ./src/services/log-generator
     volumes:
-      - ./src/services/logger:/app
-    ports:
-      - "8000:8000"
+      - ./src/services/log-generator:/app
+      - ./logs:/logs
     environment:
-      - LOG_LEVEL=INFO
+      - LOG_RATE=10
+      - CONSOLE_OUTPUT=true
+      - OUTPUT_FILE=/logs/generated_logs.log
