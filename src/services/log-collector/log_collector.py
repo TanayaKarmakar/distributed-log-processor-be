@@ -14,7 +14,14 @@ class LogCollector:
     def process_entry(self, entry):
         """Process a new log entry."""
         print(f"New log entry detected: {entry}")
-        self.buffer.append(entry)
+
+        if entry.fmt == "json" and entry.parsed:
+            print(f"Parsed JSON content: {entry.parsed}")
+            log_line = f"{entry.source} :: {entry.parsed}"
+        else:
+            log_line = f"{entry.source} :: {entry.content}"
+
+        self.buffer.append(log_line)
         self.collected_count += 1
 
         # For demonstration, we'll write every 5 entries to a file

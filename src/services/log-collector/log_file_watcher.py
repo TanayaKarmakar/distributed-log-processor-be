@@ -11,9 +11,9 @@ def watch_log_files(log_paths, regex_pattern=None, output_dir="./collected_logs"
         Args:
             log_paths: List of paths to log files to watch
             output_dir: Directory to save collected logs
+            :param regex_pattern:
             :param output_dir:
             :param log_paths:
-            :param regex:
         """
     if regex_pattern is None:
         regex_pattern = ['WARN']
@@ -41,7 +41,7 @@ def watch_log_files(log_paths, regex_pattern=None, output_dir="./collected_logs"
 
         # Initial read of existing content
         if os.path.exists(log_path) and os.path.isfile(log_path):
-            event_handler._process_file_changes(log_path, regex_pattern)
+            event_handler._process_file_changes(log_path)
 
     # Start the observer
     observer.start()

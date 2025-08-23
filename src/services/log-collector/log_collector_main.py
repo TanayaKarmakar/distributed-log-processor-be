@@ -7,7 +7,7 @@ if __name__ == "__main__":
     parser.add_argument('--log-files', nargs='+', required=True, help='Path to the log files to watch')
     parser.add_argument('--output-dir', required=True, help='Directory to store collected logs')
     #regex
-    parser.add_argument('--regex', nargs='*',required=True, help='Regex pattern to filter log entries')
+    parser.add_argument('--regex', nargs='+',required=True, help='Regex pattern to filter log entries')
 
     # Parse arguments
     args = parser.parse_args()

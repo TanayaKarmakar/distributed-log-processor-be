@@ -1,5 +1,3 @@
-from statistics import fmean
-
 from watchdog.events import FileSystemEventHandler
 from log_entry import LogEntry
 import os
@@ -23,6 +21,30 @@ class LogFileHandler(FileSystemEventHandler):
 
         # Process changes in the file
         self._process_file_changes(event.src_path)
+
+    def output_parsed_log(self, parsed_log, source_file):
+        """Output the parsed log to a JSON file or another destination"""
+
+        # Add source file information
+        parsed_log['source_file'] = os.path.basename(source_file)
+
+        # In a real system, you might:
+        # 1. Send to Kafka or other message queue
+        # 2. Write to a database
+        # 3. Send to a central logging service like Elasticsearch
+
+        # For this demo, we'll write to a JSON file
+        output_dir = os.path.join(os.path.dirname(source_file), 'parsed')
+        os.makedirs(output_dir, exist_ok=True)
+
+        output_file = os.path.join(output_dir,
+                                   f"parsed_{os.path.basename(source_file)}.json")
+
+        # Append to the file
+        with open(output_file, 'a') as f:
+            f.write(json.dumps(parsed_log) + '\n')
+
+        print(f"Parsed log from {source_file}: {json.dumps(parsed_log)[:100]}...")
 
     def _process_file_changes(self, file_path):
         """Process changes in a log file by reading new content."""
