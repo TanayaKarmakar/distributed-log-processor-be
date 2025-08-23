@@ -6,6 +6,7 @@ import time
 import random
 from datetime import datetime
 import uuid
+from time import process_time
 
 
 class LogGenerator:
@@ -28,6 +29,9 @@ class LogGenerator:
 
     def _get_request_id(self):
         return str(uuid.uuid4())
+
+    def _get_processing_time_ms(self):
+        return random.randint(1, 2000)
 
     def generate_log_message(self):
         """Generate a random log message based on configuration."""
@@ -80,9 +84,10 @@ class LogGenerator:
         # Generate a unique ID for this log entry
         log_id = f"LOG-{int(time.time())}-{random.randint(1000, 9999)}"
         request_id = self._get_request_id()
+        process_time = self._get_processing_time_ms()
 
         # Create the full log entry
-        log_entry = f"{timestamp}[{log_source_and_user}] [{log_type}] [{log_id}]:[{request_id}] {message}"
+        log_entry = f"{timestamp}[{log_source_and_user}] [{log_type}] [{log_id}]:[{request_id}] {message}, took {process_time} ms"
         return log_entry
 
     def _select_log_type(self):
